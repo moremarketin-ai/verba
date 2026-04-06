@@ -3,7 +3,7 @@ import { GoogleGenAI } from '@google/genai';
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { topicTitle, topicDesc, platform, platforms, platformSettings, contentType, sliderValue, hookText, toneOfVoice, selectedSkill, niche } = body;
+  const { topicTitle, topicDesc, platform, platforms, platformSettings, contentType, sliderValue, hookText, toneOfVoice, selectedSkill, niche, selectedCTA, ctaText } = body;
   
   const geminiKey = process.env.GEMINI_API_KEY;
   if (!geminiKey) {
@@ -80,10 +80,12 @@ export async function POST(request: Request) {
       PLATFORMA BO'YICHA MAXSUS TALABLAR:
       ${platformSpecificInstructions}
 
+      HARAKATGA CHAQIRIQ (CTA): "${ctaText}" (Ssenariy aynan shu gap bilan tugashi SHART!)
+      
       6. LEAD MAGNET (GIFT) RULE:
-         Agar ssenariy oxirida ("Harakatga chaqiriq" qismida) bironta sovg'a, qo'llanma, checklist yoki darslik va'da qilinsa (masalan: "Komentariyda 'PDF' deb yozing, men sizga yuboraman"), o'sha va'da qilingan materialning TO'LIQ mazmunini alohida "leadMagnets" qismida yozishingiz SHART. 
-         - Agar va'da qilinmasa, sohadan kelib chiqib qimmatli birorta BONUS material o'ylab toping va yozing.
+         Ssenariy oxiridagi CTA-da va'da qilingan materialning (sovg'a/qo'llanma/checklist) TO'LIQ mazmunini alohida "leadMagnets" qismida yozishingiz SHART. 
          - Bu material foydalanuvchiga haqiqatan ham foyda keltirishi kerak.
+         - Agar CTA-da birorta kalit so'z (masalan: "START") bo'lsa, material aynan shu so'z bilan bog'liq bo'lishi kerak.
 
       TIL: Sodda o'zbek tili. Jonli, qisqa jumlalar. Inglizcha atamalar mutlaqo TAQIQLANADI.
 

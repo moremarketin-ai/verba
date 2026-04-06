@@ -108,73 +108,100 @@ export default function Step5Script({ state, onBack }: Step5Props) {
     setIsGeneratingPDF(true);
     
     try {
-      const doc = new jsPDF({
-        orientation: 'p',
-        unit: 'mm',
-        format: 'a4'
-      });
-
+      const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
       const bonus = leadMagnets[activeTab] || '';
       const script = scripts[activeTab] || '';
-      const title = state.topicTitle || 'Bonus Material';
-      const niche = state.niche || 'Marketing';
+      const title = state.topicTitle || 'Marketing Strategiyasi';
+      const niche = state.niche || 'Business';
 
-      // Colors
-      const primaryColor = [201, 168, 76]; // #C9A84C gold
-      const textColor = [255, 255, 255];
-      const bgColor = [13, 13, 13];
+      // Colors & Styling
+      const gold = [201, 168, 76];
+      const dark = [10, 10, 10];
+      const lightGray = [180, 180, 180];
 
-      // Page 1: Cover
-      doc.setFillColor(bgColor[0], bgColor[1], bgColor[2]);
+      const drawHeader = (pageNum: number, pageTitle: string) => {
+        doc.setFillColor(dark[0], dark[1], dark[2]);
+        doc.rect(0, 0, 210, 297, 'F');
+        
+        // Gold border accent
+        doc.setDrawColor(gold[0], gold[1], gold[2]);
+        doc.setLineWidth(0.5);
+        doc.line(10, 10, 200, 10);
+        doc.line(10, 287, 200, 287);
+
+        // Logo text
+        doc.setTextColor(gold[0], gold[1], gold[2]);
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'bold');
+        doc.text('VERBA AI CONTENT ENGINE', 150, 20);
+        
+        doc.setTextColor(100, 100, 100);
+        doc.text(`PAGE ${pageNum}`, 20, 20);
+        
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(18);
+        doc.text(pageTitle.toUpperCase(), 20, 35);
+        doc.setDrawColor(gold[0], gold[1], gold[2]);
+        doc.setLineWidth(1);
+        doc.line(20, 38, 40, 38);
+      };
+
+      // Page 1: Premium Cover
+      doc.setFillColor(dark[0], dark[1], dark[2]);
       doc.rect(0, 0, 210, 297, 'F');
       
-      doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-      doc.setFontSize(14);
-      doc.text(`VERBA AI - ${niche.toUpperCase()}`, 20, 40);
+      // Large Gold Rectangle for title background
+      doc.setFillColor(gold[0], gold[1], gold[2]);
+      doc.rect(20, 80, 5, 40, 'F');
 
       doc.setTextColor(255, 255, 255);
-      doc.setFontSize(32);
-      const wrappedTitle = doc.splitTextToSize(title, 170);
-      doc.text(wrappedTitle, 20, 70);
+      doc.setFontSize(42);
+      doc.setFont('helvetica', 'bold');
+      const titleLines = doc.splitTextToSize(title, 150);
+      doc.text(titleLines, 35, 100);
+
+      doc.setFontSize(16);
+      doc.setTextColor(gold[0], gold[1], gold[2]);
+      doc.text(niche.toUpperCase(), 35, 85);
+
+      doc.setTextColor(lightGray[0], lightGray[1], lightGray[2]);
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
+      doc.text('Ekspertlar va kontent-meykerlar uchun maxsus qo\'llanma', 35, 130);
 
       doc.setFontSize(10);
-      doc.setTextColor(150, 150, 150);
-      doc.text(`Tayyorlangan sana: ${new Date().toLocaleDateString()}`, 20, 270);
-      doc.text('verba.ai platformasi orqali tayyorlandi', 20, 275);
+      doc.text(`Sana: ${new Date().toLocaleDateString()}`, 35, 260);
+      doc.setTextColor(gold[0], gold[1], gold[2]);
+      doc.text('www.verba.ai', 35, 265);
 
-      // Page 2: Script
+      // Page 2: Viral Script
       doc.addPage();
-      doc.setFillColor(bgColor[0], bgColor[1], bgColor[2]);
-      doc.rect(0, 0, 210, 297, 'F');
+      drawHeader(2, 'Viral Ssenariy');
       
-      doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-      doc.setFontSize(18);
-      doc.text('SSENARIY MATNI', 20, 30);
-
       doc.setTextColor(255, 255, 255);
-      doc.setFontSize(11);
-      const wrappedScript = doc.splitTextToSize(script, 170);
-      doc.text(wrappedScript, 20, 45);
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
+      const scriptLines = doc.splitTextToSize(script, 170);
+      doc.text(scriptLines, 20, 55);
 
-      // Page 3: Lead Magnet (Bonus)
+      // Page 3: Lead Magnet (Specific promised content)
       if (bonus) {
         doc.addPage();
-        doc.setFillColor(bgColor[0], bgColor[1], bgColor[2]);
-        doc.rect(0, 0, 210, 297, 'F');
-
-        doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-        doc.setFontSize(18);
-        doc.text('BONUS MATERIAL', 20, 30);
+        drawHeader(3, 'Lead Magnet (Sovg\'a)');
+        
+        doc.setTextColor(gold[0], gold[1], gold[2]);
+        doc.setFontSize(10);
+        doc.text('Ushbu material CTAdagi va\'daga muvofiq tayyorlandi.', 20, 45);
 
         doc.setTextColor(255, 255, 255);
-        doc.setFontSize(11);
-        const wrappedBonus = doc.splitTextToSize(bonus, 170);
-        doc.text(wrappedBonus, 20, 45);
+        doc.setFontSize(12);
+        const bonusLines = doc.splitTextToSize(bonus, 170);
+        doc.text(bonusLines, 20, 60);
       }
 
-      doc.save(`Verba_${activeTab}_Bonus_${new Date().getTime()}.pdf`);
+      doc.save(`Verba_${activeTab}_Prezentatsiya.pdf`);
     } catch (e) {
-      console.error(e);
+      console.error('PDF Generation failed:', e);
     } finally {
       setIsGeneratingPDF(false);
     }

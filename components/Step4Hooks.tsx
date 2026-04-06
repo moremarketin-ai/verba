@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { AppState, HookFormat, ToneOfVoice } from '@/app/page';
-import { RefreshCw, ArrowLeft, Flame, Eye, Target, Zap, BookOpen, Sword, Sparkles, Star, AlertCircle, TrendingUp, UserCheck, ShieldCheck, Heart, Clock } from 'lucide-react';
+import { RefreshCw, ArrowLeft, Flame, Eye, Target, Zap, BookOpen, Sword, Sparkles, Star, AlertCircle, TrendingUp, UserCheck, ShieldCheck, Heart, Clock, Send } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Step4HooksProps {
@@ -173,7 +173,7 @@ export default function Step4Hooks({ state, onUpdate, onNext, onBack }: Step4Hoo
                    </div>
                 </div>
                 <div className="flex flex-col gap-1.5 font-mono text-[9px] text-gray-600">
-                  {logs.map((log, i) => <p key={i}>{'>'} {log}</p>)}
+                   {logs.map((log, i) => <p key={i}>{'>'} {log}</p>)}
                 </div>
               </div>
             ) : (
@@ -213,13 +213,103 @@ export default function Step4Hooks({ state, onUpdate, onNext, onBack }: Step4Hoo
             )}
           </div>
 
+          {/* CTA Section (Visible only when hook is selected) */}
+          <AnimatePresence>
+            {state.hookText && (
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-8 flex flex-col gap-6"
+              >
+                <div className="h-px w-full bg-white/5" />
+                <div className="flex flex-col gap-2">
+                  <h3 className="text-2xl font-black text-white uppercase tracking-tighter">
+                    5. CTA (Harakatga chaqiriq)
+                  </h3>
+                  <p className="text-gray-500 text-[11px] font-bold uppercase tracking-widest leading-none">
+                    Ssenariy yakunida foydalanuvchi nima qilishi kerak?
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {[
+                    { id: 'comment', label: 'Komentariya', icon: Sparkles, template: 'Komentariyda "[WORD]" deb yozing, men sizga PDF qo\'llanmani yuboraman!' },
+                    { id: 'link', label: 'Profil Linki', icon: Target, template: 'Profilimga o\'tgan holda, link ustiga bosing va tayyor [WORD] materialni yuklab oling!' },
+                    { id: 'direct', label: 'Direkt', icon: Send, template: 'Menga direktga "[WORD]" so\'zini yozing, darslikni tashlab beraman!' },
+                    { id: 'follow', label: 'Obuna', icon: UserCheck, template: 'Menga obuna bo\'ling va "[WORD]" so\'zini yozing, sizga sovg\'am bor!' },
+                  ].map((cta) => (
+                    <button
+                      key={cta.id}
+                      onClick={() => {
+                        const word = state.ctaText.split('"')[1] || state.niche.toUpperCase();
+                        onUpdate({ 
+                          selectedCTA: cta.id, 
+                          ctaText: cta.template.replace('[WORD]', word)
+                        });
+                      }}
+                      className={`p-4 rounded-xl border text-left transition-all ${
+                        state.selectedCTA === cta.id 
+                          ? 'border-[#C9A84C] bg-[#C9A84C]/5' 
+                          : 'border-white/5 bg-white/5 hover:bg-white/10'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-8 h-8 rounded bg-white/5 flex items-center justify-center ${state.selectedCTA === cta.id ? 'text-[#C9A84C]' : 'text-gray-500'}`}>
+                          <cta.icon className="w-4 h-4" />
+                        </div>
+                        <span className={`font-black text-xs uppercase tracking-widest ${state.selectedCTA === cta.id ? 'text-[#C9A84C]' : 'text-gray-400'}`}>
+                          {cta.label}
+                        </span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+
+                {state.selectedCTA && (
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex flex-col gap-4"
+                  >
+                    <div className="flex flex-col gap-2">
+                       <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Sovg'a uchun kalit so'z (Keyword):</label>
+                       <input 
+                         type="text"
+                         placeholder="Masalan: START, REELS, STRATEGIYA"
+                         className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white font-bold uppercase tracking-widest outline-none focus:border-[#C9A84C]/50 transition-all text-sm"
+                         onChange={(e) => {
+                            const word = e.target.value.toUpperCase();
+                            const currentTemplate = [
+                              { id: 'comment', template: 'Komentariyda "[WORD]" deb yozing, men sizga PDF qo\'llanmani yuboraman!' },
+                              { id: 'link', template: 'Profilimga o\'tgan holda, link ustiga bosing va tayyor [WORD] materialni yuklab oling!' },
+                              { id: 'direct', template: 'Menga direktga "[WORD]" so\'zini yozing, darslikni tashlab beraman!' },
+                              { id: 'follow', template: 'Menga obuna bo\'ling va "[WORD]" so\'zini yozing, sizga sovg\'am bor!' },
+                            ].find(c => c.id === state.selectedCTA)?.template || '[WORD]';
+                            
+                            onUpdate({ ctaText: currentTemplate.replace('[WORD]', word || '...') });
+                         }}
+                       />
+                    </div>
+                    
+                    <div className="p-4 rounded-xl bg-green-500/5 border border-green-500/20">
+                       <p className="text-[10px] font-black text-green-500 uppercase tracking-widest mb-1">CTA Preview:</p>
+                       <p className="text-sm font-medium text-white italic leading-relaxed">
+                         "{state.ctaText}"
+                       </p>
+                    </div>
+                  </motion.div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <div className="flex justify-between mt-8">
             <button onClick={onBack} className="px-8 py-4 bg-white/5 rounded-2xl text-white font-bold hover:bg-white/10 transition-all uppercase tracking-widest text-xs">
               ← Orqaga
             </button>
             <button 
               onClick={onNext}
-              disabled={!state.hookText}
+              disabled={!state.hookText || !state.selectedCTA}
               className="px-12 py-4 bg-[#C9A84C] text-black rounded-2xl font-black hover:bg-[#E0C16C] transition-all disabled:opacity-30 uppercase tracking-widest text-xs"
             >
               Keyingi Bosqich →

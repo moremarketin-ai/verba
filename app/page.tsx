@@ -40,6 +40,8 @@ export interface AppState {
   toneOfVoice: ToneOfVoice | null;
   selectedSkill: Skill | null;
   niche: string;
+  selectedCTA: string | null;
+  ctaText: string;
 }
 
 export default function WizardPage() {
@@ -74,6 +76,8 @@ export default function WizardPage() {
     toneOfVoice: null,
     selectedSkill: 'PAS',
     niche: '',
+    selectedCTA: null,
+    ctaText: '',
   });
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
