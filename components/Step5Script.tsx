@@ -12,6 +12,7 @@ interface Step5Props {
 
 export default function Step5Script({ state, onBack }: Step5Props) {
   const [scripts, setScripts] = useState<Record<string, string>>({});
+  const [leadMagnets, setLeadMagnets] = useState<Record<string, string>>({});
   const [activeTab, setActiveTab] = useState<string>('');
   const [visualPrompts, setVisualPrompts] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -19,6 +20,7 @@ export default function Step5Script({ state, onBack }: Step5Props) {
   const [logs, setLogs] = useState<string[]>([]);
   const [copied, setCopied] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -42,6 +44,7 @@ export default function Step5Script({ state, onBack }: Step5Props) {
         "Qimmat copywriting usullari qo'llanilmoqda...",
         "Hook mantiqiy davom ettirilmoqda...",
         "Psixologik triggerlar joylashtirilyapti...",
+        "Lead Magnet tayyorlanmoqda...",
         "Visual promptlar generatsiya qilinyapti...",
         "AI Ssenariy yakunlanmoqda..."
       ];
@@ -65,6 +68,7 @@ export default function Step5Script({ state, onBack }: Step5Props) {
     setLoading(true);
     setVisualPrompts([]);
     setScripts({});
+    setLeadMagnets({});
     try {
       const res = await fetch('/api/script', {
         method: 'POST',
@@ -74,12 +78,11 @@ export default function Step5Script({ state, onBack }: Step5Props) {
 
       if (res.ok) {
         const data = await res.json();
-        const generatedScripts = data.scripts || {};
-        setScripts(generatedScripts);
+        setScripts(data.scripts || {});
+        setLeadMagnets(data.leadMagnets || {});
         setVisualPrompts(data.visualPrompts || []);
         
-        // Auto-select first platform
-        const platforms = Object.keys(generatedScripts);
+        const platforms = Object.keys(data.scripts || {});
         if (platforms.length > 0) {
           setActiveTab(platforms[0]);
         }
@@ -100,6 +103,83 @@ export default function Step5Script({ state, onBack }: Step5Props) {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const generatePDF = async () => {
+    const { jsPDF } = await import('jspdf');
+    setIsGeneratingPDF(true);
+    
+    try {
+      const doc = new jsPDF({
+        orientation: 'p',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const bonus = leadMagnets[activeTab] || '';
+      const script = scripts[activeTab] || '';
+      const title = state.topicTitle || 'Bonus Material';
+      const niche = state.niche || 'Marketing';
+
+      // Colors
+      const primaryColor = [201, 168, 76]; // #C9A84C gold
+      const textColor = [255, 255, 255];
+      const bgColor = [13, 13, 13];
+
+      // Page 1: Cover
+      doc.setFillColor(bgColor[0], bgColor[1], bgColor[2]);
+      doc.rect(0, 0, 210, 297, 'F');
+      
+      doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+      doc.setFontSize(14);
+      doc.text(`VERBA AI - ${niche.toUpperCase()}`, 20, 40);
+
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(32);
+      const wrappedTitle = doc.splitTextToSize(title, 170);
+      doc.text(wrappedTitle, 20, 70);
+
+      doc.setFontSize(10);
+      doc.setTextColor(150, 150, 150);
+      doc.text(`Tayyorlangan sana: ${new Date().toLocaleDateString()}`, 20, 270);
+      doc.text('verba.ai platformasi orqali tayyorlandi', 20, 275);
+
+      // Page 2: Script
+      doc.addPage();
+      doc.setFillColor(bgColor[0], bgColor[1], bgColor[2]);
+      doc.rect(0, 0, 210, 297, 'F');
+      
+      doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+      doc.setFontSize(18);
+      doc.text('SSENARIY MATNI', 20, 30);
+
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(11);
+      const wrappedScript = doc.splitTextToSize(script, 170);
+      doc.text(wrappedScript, 20, 45);
+
+      // Page 3: Lead Magnet (Bonus)
+      if (bonus) {
+        doc.addPage();
+        doc.setFillColor(bgColor[0], bgColor[1], bgColor[2]);
+        doc.rect(0, 0, 210, 297, 'F');
+
+        doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+        doc.setFontSize(18);
+        doc.text('BONUS MATERIAL', 20, 30);
+
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(11);
+        const wrappedBonus = doc.splitTextToSize(bonus, 170);
+        doc.text(wrappedBonus, 20, 45);
+      }
+
+      doc.save(`Verba_${activeTab}_Bonus_${new Date().getTime()}.pdf`);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
+
   const handleDownload = () => {
     const text = scripts[activeTab] || '';
     const element = document.createElement("a");
@@ -110,6 +190,7 @@ export default function Step5Script({ state, onBack }: Step5Props) {
   };
 
   const currentScript = scripts[activeTab] || '';
+  const currentBonus = leadMagnets[activeTab] || '';
 
   return (
     <div className="flex flex-col gap-6 animate-in slide-in-from-right-8 duration-500">
@@ -217,13 +298,48 @@ export default function Step5Script({ state, onBack }: Step5Props) {
                       const newScripts = { ...scripts, [activeTab]: e.target.value };
                       setScripts(newScripts);
                     }}
-                    className="w-full h-[450px] bg-transparent text-white resize-none outline-none leading-relaxed text-sm font-medium p-2 border border-[#C9A84C]/30 rounded-lg focus:border-[#C9A84C] transition-all"
+                    className="w-full h-[350px] bg-transparent text-white resize-none outline-none leading-relaxed text-sm font-medium p-2 border border-[#C9A84C]/30 rounded-lg focus:border-[#C9A84C] transition-all"
                   />
                 ) : (
-                  <div className="prose prose-invert max-w-none text-base md:text-lg leading-relaxed font-semibold text-white/95 whitespace-pre-wrap selection:bg-[#C9A84C] selection:text-black tracking-tight">
+                  <div className="prose prose-invert max-w-none text-base md:text-lg leading-relaxed font-semibold text-white/95 whitespace-pre-wrap selection:bg-[#C9A84C] selection:text-black tracking-tight mb-8">
                     {currentScript || 'Ssenariy generatsiya qilinmagan.'}
                   </div>
                 )}
+
+                {/* Bonus Material Section */}
+                <AnimatePresence>
+                  {currentBonus && !loading && (
+                    <motion.div 
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      className="mt-8 border-t border-[#C9A84C]/30 pt-6"
+                    >
+                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded bg-[#C9A84C]/20 flex items-center justify-center text-[#C9A84C]">
+                            <Sparkles className="w-3.5 h-3.5" />
+                          </div>
+                          <h4 className="text-[11px] font-black text-white uppercase tracking-widest">Bonus Material (Lead Magnet)</h4>
+                        </div>
+                        <div className="flex gap-2">
+                          <button 
+                            onClick={generatePDF}
+                            disabled={isGeneratingPDF}
+                            className="flex items-center gap-2 px-4 py-1.5 bg-[#C9A84C]/10 hover:bg-[#C9A84C]/20 text-[#C9A84C] border border-[#C9A84C]/30 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all disabled:opacity-50"
+                          >
+                            <Download className="w-3 h-3" />
+                            {isGeneratingPDF ? 'Tayyorlanmoqda...' : 'PDF Prezentatsiya'}
+                          </button>
+                        </div>
+                      </div>
+                      <div className="p-5 rounded-xl bg-[#C9A84C]/5 border border-[#C9A84C]/10">
+                        <p className="text-sm text-gray-300 leading-relaxed italic whitespace-pre-wrap">
+                          {currentBonus}
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.div>
             )}
           </div>

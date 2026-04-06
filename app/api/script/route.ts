@@ -80,6 +80,11 @@ export async function POST(request: Request) {
       PLATFORMA BO'YICHA MAXSUS TALABLAR:
       ${platformSpecificInstructions}
 
+      6. LEAD MAGNET (GIFT) RULE:
+         Agar ssenariy oxirida ("Harakatga chaqiriq" qismida) bironta sovg'a, qo'llanma, checklist yoki darslik va'da qilinsa (masalan: "Komentariyda 'PDF' deb yozing, men sizga yuboraman"), o'sha va'da qilingan materialning TO'LIQ mazmunini alohida "leadMagnets" qismida yozishingiz SHART. 
+         - Agar va'da qilinmasa, sohadan kelib chiqib qimmatli birorta BONUS material o'ylab toping va yozing.
+         - Bu material foydalanuvchiga haqiqatan ham foyda keltirishi kerak.
+
       TIL: Sodda o'zbek tili. Jonli, qisqa jumlalar. Inglizcha atamalar mutlaqo TAQIQLANADI.
 
       OUTPUT FORMAT (JSON ONLY):
@@ -87,6 +92,9 @@ export async function POST(request: Request) {
       {
         "scripts": {
            "PlatformName": "Script content..."
+        },
+        "leadMagnets": {
+           "PlatformName": "Full content of the promised gift/guide/checklist..."
         },
         "visualPrompts": [
           "Prompt 1 for Midjourney/DALL-E in ENGLISH",
@@ -106,6 +114,7 @@ export async function POST(request: Request) {
     const result = JSON.parse(response.text || '{}');
     return NextResponse.json({ 
       scripts: result.scripts || {},
+      leadMagnets: result.leadMagnets || {},
       visualPrompts: result.visualPrompts || [],
       platforms: targetPlatforms
     });
