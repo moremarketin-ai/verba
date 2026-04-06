@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { AppState } from '@/app/page';
-import { Copy, Download, RefreshCcw, Edit3, Check, Sparkles } from 'lucide-react';
+import { Copy, Download, RefreshCcw, Edit3, Check, Sparkles, Target } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Step5Props {
@@ -335,7 +335,7 @@ export default function Step5Script({ state, onBack }: Step5Props) {
 
                 {/* Bonus Material Section */}
                 <AnimatePresence>
-                  {currentBonus && !loading && (
+                  {state.leadMagnetUsage === 'with' && currentBonus && !loading && (
                     <motion.div 
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
@@ -344,19 +344,47 @@ export default function Step5Script({ state, onBack }: Step5Props) {
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                         <div className="flex items-center gap-2">
                           <div className="w-6 h-6 rounded bg-[#C9A84C]/20 flex items-center justify-center text-[#C9A84C]">
-                            <Sparkles className="w-3.5 h-3.5" />
+                            {state.leadMagnetType === 'pdf' ? <Download className="w-3.5 h-3.5" /> : <Sparkles className="w-3.5 h-3.5" />}
                           </div>
-                          <h4 className="text-[11px] font-black text-white uppercase tracking-widest">Bonus Material (Lead Magnet)</h4>
+                          <h4 className="text-[11px] font-black text-white uppercase tracking-widest">
+                            {state.leadMagnetType === 'pdf' ? 'Lead Magnet (PDF)' : 
+                             state.leadMagnetType === 'article' ? 'Bonus Maqola / Post' : 
+                             state.leadMagnetType === 'video_link' ? 'Video Manba' : 'Bonus Material'}
+                          </h4>
                         </div>
                         <div className="flex gap-2">
-                          <button 
-                            onClick={generatePDF}
-                            disabled={isGeneratingPDF}
-                            className="flex items-center gap-2 px-4 py-1.5 bg-[#C9A84C]/10 hover:bg-[#C9A84C]/20 text-[#C9A84C] border border-[#C9A84C]/30 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all disabled:opacity-50"
-                          >
-                            <Download className="w-3 h-3" />
-                            {isGeneratingPDF ? 'Tayyorlanmoqda...' : 'PDF Prezentatsiya'}
-                          </button>
+                          {state.leadMagnetType === 'pdf' ? (
+                            <button 
+                              onClick={generatePDF}
+                              disabled={isGeneratingPDF}
+                              className="flex items-center gap-2 px-4 py-1.5 bg-[#C9A84C]/10 hover:bg-[#C9A84C]/20 text-[#C9A84C] border border-[#C9A84C]/30 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all disabled:opacity-50"
+                            >
+                              <Download className="w-3 h-3" />
+                              {isGeneratingPDF ? 'Tayyorlanmoqda...' : 'PDFni Yuklab Olish'}
+                            </button>
+                          ) : (
+                            <button 
+                              onClick={() => handleCopy(currentBonus)}
+                              className="flex items-center gap-2 px-4 py-1.5 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all"
+                            >
+                              <Copy className="w-3 h-3" />
+                              Nusxa Olish
+                            </button>
+                          )}
+                          
+                          {(state.leadMagnetType === 'video_link' || state.leadMagnetType === 'site_link') && (
+                            <button 
+                              onClick={() => {
+                                const urlMatch = currentBonus.match(/https?:\/\/[^\s]+/);
+                                if (urlMatch) window.open(urlMatch[0], '_blank');
+                                else alert('Link topilmadi. Matndan nusxa oling.');
+                              }}
+                              className="flex items-center gap-2 px-4 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all"
+                            >
+                              <Target className="w-3 h-3" />
+                              Linkka O'tish
+                            </button>
+                          )}
                         </div>
                       </div>
                       <div className="p-5 rounded-xl bg-[#C9A84C]/5 border border-[#C9A84C]/10">

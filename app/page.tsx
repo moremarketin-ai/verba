@@ -42,6 +42,8 @@ export interface AppState {
   niche: string;
   selectedCTA: string | null;
   ctaText: string;
+  leadMagnetUsage: 'with' | 'without';
+  leadMagnetType: 'pdf' | 'video_link' | 'article' | 'site_link' | 'custom' | null;
 }
 
 export default function WizardPage() {
@@ -78,6 +80,8 @@ export default function WizardPage() {
     niche: '',
     selectedCTA: null,
     ctaText: '',
+    leadMagnetUsage: 'with',
+    leadMagnetType: 'pdf',
   });
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
