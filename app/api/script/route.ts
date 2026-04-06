@@ -38,6 +38,13 @@ export async function POST(request: Request) {
           Lead Magnet matni alohida "leadMagnets" qismida bo'lsin.
         `;
 
+      const platformSpecificInstructions = targetPlatforms.map(p => {
+        let detail = '';
+        if (['YouTube', 'Instagram'].includes(p)) detail = "VIDEOLAR UCHUN: FAQAT SOF MATN. Emojilar TAQIQLANADI. Teleprompter rejimi (faqat o'qish uchun qulay gaplar). HECH QANDAY 'Kadr' yoki 'Video' kabi izohlar bo'lmasin.";
+        else detail = "MATNLI POSTLAR UCHUN: Emojilar, chiroyli abzaslar, sarlavhalar majburiy. O'qishga qulay vizual struktura.";
+        return `${p} uchun: ${detail}`;
+      }).join('\n');
+
       const prompt = `
         SIZ — DUNYODAGI ENG QIMMAT KOPIRAYTING AGENTISIZ.
         MAQSAD: "${niche}" sohasi uchun "${topicTitle}" (${topicDesc}) mavzusida GIPNOTIK ssenariy yozing.
@@ -48,6 +55,9 @@ export async function POST(request: Request) {
         
         ${leadMagnetInstructions}
 
+        PLATFORMA BO'YICHA FORMATLASH QOIDALARI:
+        ${platformSpecificInstructions}
+
         SSENARIY STRUKTURASI:
         1. ILGAK (Hook).
         2. QIYMAT (Value) - ${leadMagnetUsage === 'without' ? 'Maksimal darajada batafsil va yangi ma\'lumotlar' : 'Muammoni ochish va yechimga yo\'l ko\'rsatish'}.
@@ -56,10 +66,10 @@ export async function POST(request: Request) {
         OUTPUT FORMAT (JSON ONLY):
         {
           "scripts": {
-             "PlatformName": "Script content..."
+             "PlatformName": "Script content following formatting rules..."
           },
           "leadMagnets": {
-             "PlatformName": "Matnli maqola yoki PDF uchun checklist matni..."
+             "PlatformName": "Detailed gift content (Checklist/Article/PDF text) for the CTA..."
           },
           "visualPrompts": []
         }

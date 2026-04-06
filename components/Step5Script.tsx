@@ -335,7 +335,7 @@ export default function Step5Script({ state, onBack }: Step5Props) {
 
                 {/* Bonus Material Section */}
                 <AnimatePresence>
-                  {state.leadMagnetUsage === 'with' && currentBonus && !loading && (
+                  {state.leadMagnetUsage === 'with' && !loading && (
                     <motion.div 
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
@@ -356,16 +356,17 @@ export default function Step5Script({ state, onBack }: Step5Props) {
                           {state.leadMagnetType === 'pdf' ? (
                             <button 
                               onClick={generatePDF}
-                              disabled={isGeneratingPDF}
-                              className="flex items-center gap-2 px-4 py-1.5 bg-[#C9A84C]/10 hover:bg-[#C9A84C]/20 text-[#C9A84C] border border-[#C9A84C]/30 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all disabled:opacity-50"
+                              disabled={isGeneratingPDF || !currentBonus}
+                              className="flex items-center gap-2 px-4 py-1.5 bg-[#C9A84C] hover:bg-[#E0C16C] text-black border border-[#C9A84C]/30 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all disabled:opacity-50"
                             >
                               <Download className="w-3 h-3" />
                               {isGeneratingPDF ? 'Tayyorlanmoqda...' : 'PDFni Yuklab Olish'}
                             </button>
                           ) : (
                             <button 
-                              onClick={() => handleCopy(currentBonus)}
-                              className="flex items-center gap-2 px-4 py-1.5 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all"
+                              onClick={() => currentBonus && handleCopy(currentBonus)}
+                              disabled={!currentBonus}
+                              className="flex items-center gap-2 px-4 py-1.5 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all disabled:opacity-30"
                             >
                               <Copy className="w-3 h-3" />
                               Nusxa Olish
@@ -375,11 +376,12 @@ export default function Step5Script({ state, onBack }: Step5Props) {
                           {(state.leadMagnetType === 'video_link' || state.leadMagnetType === 'site_link') && (
                             <button 
                               onClick={() => {
-                                const urlMatch = currentBonus.match(/https?:\/\/[^\s]+/);
+                                const urlMatch = currentBonus?.match(/https?:\/\/[^\s]+/);
                                 if (urlMatch) window.open(urlMatch[0], '_blank');
                                 else alert('Link topilmadi. Matndan nusxa oling.');
                               }}
-                              className="flex items-center gap-2 px-4 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all"
+                              disabled={!currentBonus}
+                              className="flex items-center gap-2 px-4 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all disabled:opacity-30"
                             >
                               <Target className="w-3 h-3" />
                               Linkka O'tish
@@ -387,10 +389,17 @@ export default function Step5Script({ state, onBack }: Step5Props) {
                           )}
                         </div>
                       </div>
-                      <div className="p-5 rounded-xl bg-[#C9A84C]/5 border border-[#C9A84C]/10">
-                        <p className="text-sm text-gray-300 leading-relaxed italic whitespace-pre-wrap">
-                          {currentBonus}
-                        </p>
+                      <div className="p-5 rounded-xl bg-[#C9A84C]/5 border border-[#C9A84C]/10 min-h-[100px] flex items-center justify-center">
+                        {currentBonus ? (
+                          <p className="text-sm text-gray-300 leading-relaxed italic whitespace-pre-wrap w-full">
+                            {currentBonus}
+                          </p>
+                        ) : (
+                          <div className="flex flex-col items-center gap-2 text-gray-500">
+                            <RefreshCcw className="w-5 h-5 animate-spin" />
+                            <p className="text-[10px] font-bold uppercase tracking-widest">Bonus material tayyorlanmoqda...</p>
+                          </div>
+                        )}
                       </div>
                     </motion.div>
                   )}
