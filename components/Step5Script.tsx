@@ -112,94 +112,145 @@ export default function Step5Script({ state, onBack }: Step5Props) {
       const bonus = leadMagnets[activeTab] || '';
       const script = scripts[activeTab] || '';
       const title = state.topicTitle || 'Marketing Strategiyasi';
-      const niche = state.niche || 'Business';
+      const niche = state.niche || 'Sohangiz';
 
       // Colors & Styling
       const gold = [201, 168, 76];
       const dark = [10, 10, 10];
-      const lightGray = [180, 180, 180];
+      const cardBg = [25, 25, 25];
+      const lightGray = [150, 150, 150];
 
       const drawHeader = (pageNum: number, pageTitle: string) => {
+        // Full Page Dark Background
         doc.setFillColor(dark[0], dark[1], dark[2]);
         doc.rect(0, 0, 210, 297, 'F');
         
-        // Gold border accent
-        doc.setDrawColor(gold[0], gold[1], gold[2]);
-        doc.setLineWidth(0.5);
-        doc.line(10, 10, 200, 10);
-        doc.line(10, 287, 200, 287);
-
-        // Logo text
+        // Brand Header Line
+        doc.setFillColor(gold[0], gold[1], gold[2]);
+        doc.rect(20, 15, 3, 3, 'F');
         doc.setTextColor(gold[0], gold[1], gold[2]);
-        doc.setFontSize(10);
+        doc.setFontSize(8);
         doc.setFont('helvetica', 'bold');
-        doc.text('VERBA AI CONTENT ENGINE', 150, 20);
+        doc.text('VERBA | AI CONTENT ENGINE', 25, 17.5);
         
-        doc.setTextColor(100, 100, 100);
-        doc.text(`PAGE ${pageNum}`, 20, 20);
-        
+        doc.setTextColor(lightGray[0], lightGray[1], lightGray[2]);
+        doc.setFontSize(7);
+        doc.text(`STRATEGIK MATERIALLAR — ${new Date().getFullYear()}`, 150, 17.5);
+
+        // Page Title & Separator
         doc.setTextColor(255, 255, 255);
-        doc.setFontSize(18);
+        doc.setFontSize(22);
+        doc.setFont('helvetica', 'bold');
         doc.text(pageTitle.toUpperCase(), 20, 35);
+        
         doc.setDrawColor(gold[0], gold[1], gold[2]);
-        doc.setLineWidth(1);
-        doc.line(20, 38, 40, 38);
+        doc.setLineWidth(0.8);
+        doc.line(20, 38, 45, 38);
       };
 
-      // Page 1: Premium Cover
+      const drawFooter = (pageNum: number) => {
+        doc.setTextColor(100, 100, 100);
+        doc.setFontSize(8);
+        doc.text(`SAHIFA ${pageNum}`, 20, 285);
+        doc.text('Ushbu material Verba algoritmlari orqali avtomatik generatsiya qilingan.', 120, 285);
+      };
+
+      // Page 1: Premium Cover (Magazine Style)
       doc.setFillColor(dark[0], dark[1], dark[2]);
       doc.rect(0, 0, 210, 297, 'F');
       
-      // Large Gold Rectangle for title background
-      doc.setFillColor(gold[0], gold[1], gold[2]);
-      doc.rect(20, 80, 5, 40, 'F');
+      // Abstract background design
+      doc.setFillColor(20, 20, 20);
+      doc.rect(140, 0, 70, 297, 'F');
+      doc.setDrawColor(gold[0], gold[1], gold[2]);
+      doc.setLineWidth(0.5);
+      doc.line(140, 0, 140, 297);
+
+      // Title Section
+      doc.setTextColor(gold[0], gold[1], gold[2]);
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text(niche.toUpperCase() || 'MARKETING', 20, 80);
 
       doc.setTextColor(255, 255, 255);
-      doc.setFontSize(42);
+      doc.setFontSize(48);
       doc.setFont('helvetica', 'bold');
-      const titleLines = doc.splitTextToSize(title, 150);
-      doc.text(titleLines, 35, 100);
-
-      doc.setFontSize(16);
-      doc.setTextColor(gold[0], gold[1], gold[2]);
-      doc.text(niche.toUpperCase(), 35, 85);
+      const titleLines = doc.splitTextToSize(title, 110);
+      doc.text(titleLines, 20, 110);
 
       doc.setTextColor(lightGray[0], lightGray[1], lightGray[2]);
-      doc.setFontSize(12);
+      doc.setFontSize(13);
       doc.setFont('helvetica', 'normal');
-      doc.text('Ekspertlar va kontent-meykerlar uchun maxsus qo\'llanma', 35, 130);
+      doc.text('Viral kontent-strategiya va premium qo\'llanma.', 20, 145);
 
+      // Label at bottom
+      doc.setFillColor(gold[0], gold[1], gold[2]);
+      doc.rect(20, 240, 110, 12, 'F');
+      doc.setTextColor(0, 0, 0);
       doc.setFontSize(10);
-      doc.text(`Sana: ${new Date().toLocaleDateString()}`, 35, 260);
-      doc.setTextColor(gold[0], gold[1], gold[2]);
-      doc.text('www.verba.ai', 35, 265);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Eksklyuziv material: ' + (state.platforms.join(' / ') || 'Ijtimoiy Tarmoqlar'), 24, 247.5);
 
-      // Page 2: Viral Script
+      doc.setTextColor(150, 150, 150);
+      doc.setFontSize(9);
+      doc.text(`Generatsiya sanasi: ${new Date().toLocaleDateString()}`, 20, 270);
+      doc.setTextColor(gold[0], gold[1], gold[2]);
+      doc.text('WWW.VERBA.AI', 20, 275);
+
+      // Page 2: Viral Script (Structure Card Style)
       doc.addPage();
       drawHeader(2, 'Viral Ssenariy');
       
-      doc.setTextColor(255, 255, 255);
-      doc.setFontSize(12);
-      doc.setFont('helvetica', 'normal');
-      const scriptLines = doc.splitTextToSize(script, 170);
-      doc.text(scriptLines, 20, 55);
+      // Platform Banner
+      doc.setFillColor(cardBg[0], cardBg[1], cardBg[2]);
+      doc.rect(20, 45, 170, 12, 'F');
+      doc.setTextColor(gold[0], gold[1], gold[2]);
+      doc.setFontSize(9);
+      doc.text(`PLATFORMA: ${activeTab.toUpperCase()}`, 25, 52.5);
 
-      // Page 3: Lead Magnet (Specific promised content)
+      // Content Card
+      doc.setFillColor(cardBg[0], cardBg[1], cardBg[2]);
+      doc.roundedRect(20, 62, 170, 200, 3, 3, 'F');
+      
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'normal');
+      const scriptLines = doc.splitTextToSize(script, 155);
+      doc.text(scriptLines, 28, 75, { lineHeightFactor: 1.6 });
+
+      drawFooter(2);
+
+      // Page 3: Lead Magnet (Product Style)
       if (bonus) {
         doc.addPage();
-        drawHeader(3, 'Lead Magnet (Sovg\'a)');
+        drawHeader(3, 'Strategik Sovg\'a');
         
         doc.setTextColor(gold[0], gold[1], gold[2]);
         doc.setFontSize(10);
-        doc.text('Ushbu material CTAdagi va\'daga muvofiq tayyorlandi.', 20, 45);
+        doc.setFont('helvetica', 'bold');
+        doc.text('OBUNACHI UCHUN QIYMAT (LEAD MAGNET):', 20, 48);
 
+        // Bonus Content Card
+        doc.setFillColor(cardBg[0], cardBg[1], cardBg[2]);
+        doc.roundedRect(20, 55, 170, 205, 3, 3, 'F');
+        
         doc.setTextColor(255, 255, 255);
-        doc.setFontSize(12);
-        const bonusLines = doc.splitTextToSize(bonus, 170);
-        doc.text(bonusLines, 20, 60);
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'normal');
+        const bonusLines = doc.splitTextToSize(bonus, 155);
+        doc.text(bonusLines, 28, 70, { lineHeightFactor: 1.6 });
+
+        // Call to action note
+        doc.setFillColor(gold[0], gold[1], gold[2]);
+        doc.rect(20, 270, 170, 8, 'F');
+        doc.setTextColor(0, 0, 0);
+        doc.setFontSize(9);
+        doc.text('Ushbu material obunachini mijozimizga aylantirish uchun mo\'ljallangan.', 25, 275);
+
+        drawFooter(3);
       }
 
-      doc.save(`Verba_${activeTab}_Prezentatsiya.pdf`);
+      doc.save(`Verba_${activeTab}_Strategiya_${state.niche}.pdf`);
     } catch (e) {
       console.error('PDF Generation failed:', e);
     } finally {
