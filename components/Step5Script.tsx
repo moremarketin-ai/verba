@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { AppState } from '@/app/page';
-import { Copy, Download, RefreshCcw, Edit3, Check, Sparkles, Target } from 'lucide-react';
+import { Copy, Download, RefreshCcw, Edit3, Check, Sparkles, Target, ExternalLink, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Step5Props {
@@ -21,6 +21,9 @@ export default function Step5Script({ state, onBack }: Step5Props) {
   const [copied, setCopied] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [showAuthorModal, setShowAuthorModal] = useState(false);
+  const [authorName, setAuthorName] = useState('');
+  const [authorTitle, setAuthorTitle] = useState('');
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -103,7 +106,39 @@ export default function Step5Script({ state, onBack }: Step5Props) {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  // Helper: write paginated text, returns final Y position
+  const writePaginatedText = (
+    doc: any,
+    lines: string[],
+    startY: number,
+    x: number,
+    maxY: number,
+    lineH: number,
+    addNewPage: () => void
+  ) => {
+    let y = startY;
+    for (const line of lines) {
+      if (y + lineH > maxY) {
+        addNewPage();
+        y = 55;
+      }
+      doc.text(line, x, y);
+      y += lineH;
+    }
+  };
+
+  const openWithGamma = () => {
+    const script = scripts[activeTab] || '';
+    const bonus = leadMagnets[activeTab] || '';
+    const author = authorName ? `\n\nMuallif: ${authorName}${authorTitle ? ' — ' + authorTitle : ''}` : '';
+    const fullContent = `MAVZU: ${state.topicTitle}\nSOHA: ${state.niche}\nPLATFORMA: ${activeTab}\n\n== SSENARIY ==\n${script}\n\n== BONUS MATERIAL ==\n${bonus}${author}`;
+    navigator.clipboard.writeText(fullContent).then(() => {
+      window.open('https://gamma.app/create', '_blank');
+    });
+  };
+
   const generatePDF = async () => {
+    setShowAuthorModal(false);
     const { jsPDF } = await import('jspdf');
     setIsGeneratingPDF(true);
     
@@ -112,145 +147,197 @@ export default function Step5Script({ state, onBack }: Step5Props) {
       const bonus = leadMagnets[activeTab] || '';
       const script = scripts[activeTab] || '';
       const title = state.topicTitle || 'Marketing Strategiyasi';
-      const niche = state.niche || 'Sohangiz';
+      const niche = state.niche || '';
+      const author = authorName || '';
+      const aTitle = authorTitle || '';
 
-      // Colors & Styling
-      const gold = [201, 168, 76];
-      const dark = [10, 10, 10];
-      const cardBg = [25, 25, 25];
-      const lightGray = [150, 150, 150];
+      // Color palette
+      const gold = [201, 168, 76] as [number,number,number];
+      const dark = [10, 10, 10] as [number,number,number];
+      const cardBg = [22, 22, 22] as [number,number,number];
+      const gray = [130, 130, 130] as [number,number,number];
 
-      const drawHeader = (pageNum: number, pageTitle: string) => {
-        // Full Page Dark Background
-        doc.setFillColor(dark[0], dark[1], dark[2]);
-        doc.rect(0, 0, 210, 297, 'F');
-        
-        // Brand Header Line
-        doc.setFillColor(gold[0], gold[1], gold[2]);
-        doc.rect(20, 15, 3, 3, 'F');
-        doc.setTextColor(gold[0], gold[1], gold[2]);
-        doc.setFontSize(8);
-        doc.setFont('helvetica', 'bold');
-        doc.text('VERBA | AI CONTENT ENGINE', 25, 17.5);
-        
-        doc.setTextColor(lightGray[0], lightGray[1], lightGray[2]);
-        doc.setFontSize(7);
-        doc.text(`STRATEGIK MATERIALLAR — ${new Date().getFullYear()}`, 150, 17.5);
+      const LINE_H = 6.5;
+      const CONTENT_X = 25;
+      const CONTENT_W = 160;
+      const PAGE_BOTTOM = 278;
 
-        // Page Title & Separator
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(22);
-        doc.setFont('helvetica', 'bold');
-        doc.text(pageTitle.toUpperCase(), 20, 35);
-        
-        doc.setDrawColor(gold[0], gold[1], gold[2]);
-        doc.setLineWidth(0.8);
-        doc.line(20, 38, 45, 38);
-      };
-
-      const drawFooter = (pageNum: number) => {
-        doc.setTextColor(100, 100, 100);
-        doc.setFontSize(8);
-        doc.text(`SAHIFA ${pageNum}`, 20, 285);
-        doc.text('Ushbu material Verba algoritmlari orqali avtomatik generatsiya qilingan.', 120, 285);
-      };
-
-      // Page 1: Premium Cover (Magazine Style)
-      doc.setFillColor(dark[0], dark[1], dark[2]);
+      // ===== PAGE 1: COVER =====
+      doc.setFillColor(...dark);
       doc.rect(0, 0, 210, 297, 'F');
-      
-      // Abstract background design
-      doc.setFillColor(20, 20, 20);
-      doc.rect(140, 0, 70, 297, 'F');
-      doc.setDrawColor(gold[0], gold[1], gold[2]);
-      doc.setLineWidth(0.5);
-      doc.line(140, 0, 140, 297);
 
-      // Title Section
-      doc.setTextColor(gold[0], gold[1], gold[2]);
-      doc.setFontSize(14);
-      doc.setFont('helvetica', 'bold');
-      doc.text(niche.toUpperCase() || 'MARKETING', 20, 80);
+      // Right accent panel
+      doc.setFillColor(18, 18, 18);
+      doc.rect(145, 0, 65, 297, 'F');
+      doc.setDrawColor(...gold);
+      doc.setLineWidth(0.4);
+      doc.line(145, 0, 145, 297);
 
-      doc.setTextColor(255, 255, 255);
-      doc.setFontSize(48);
-      doc.setFont('helvetica', 'bold');
-      const titleLines = doc.splitTextToSize(title, 110);
-      doc.text(titleLines, 20, 110);
-
-      doc.setTextColor(lightGray[0], lightGray[1], lightGray[2]);
-      doc.setFontSize(13);
-      doc.setFont('helvetica', 'normal');
-      doc.text('Viral kontent-strategiya va premium qo\'llanma.', 20, 145);
-
-      // Label at bottom
-      doc.setFillColor(gold[0], gold[1], gold[2]);
-      doc.rect(20, 240, 110, 12, 'F');
-      doc.setTextColor(0, 0, 0);
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'bold');
-      doc.text('Eksklyuziv material: ' + (state.platforms.join(' / ') || 'Ijtimoiy Tarmoqlar'), 24, 247.5);
-
-      doc.setTextColor(150, 150, 150);
-      doc.setFontSize(9);
-      doc.text(`Generatsiya sanasi: ${new Date().toLocaleDateString()}`, 20, 270);
-      doc.setTextColor(gold[0], gold[1], gold[2]);
-      doc.text('WWW.VERBA.AI', 20, 275);
-
-      // Page 2: Viral Script (Structure Card Style)
-      doc.addPage();
-      drawHeader(2, 'Viral Ssenariy');
-      
-      // Platform Banner
-      doc.setFillColor(cardBg[0], cardBg[1], cardBg[2]);
-      doc.rect(20, 45, 170, 12, 'F');
-      doc.setTextColor(gold[0], gold[1], gold[2]);
-      doc.setFontSize(9);
-      doc.text(`PLATFORMA: ${activeTab.toUpperCase()}`, 25, 52.5);
-
-      // Content Card
-      doc.setFillColor(cardBg[0], cardBg[1], cardBg[2]);
-      doc.roundedRect(20, 62, 170, 200, 3, 3, 'F');
-      
-      doc.setTextColor(255, 255, 255);
-      doc.setFontSize(11);
-      doc.setFont('helvetica', 'normal');
-      const scriptLines = doc.splitTextToSize(script, 155);
-      doc.text(scriptLines, 28, 75, { lineHeightFactor: 1.6 });
-
-      drawFooter(2);
-
-      // Page 3: Lead Magnet (Product Style)
-      if (bonus) {
-        doc.addPage();
-        drawHeader(3, 'Strategik Sovg\'a');
-        
-        doc.setTextColor(gold[0], gold[1], gold[2]);
-        doc.setFontSize(10);
-        doc.setFont('helvetica', 'bold');
-        doc.text('OBUNACHI UCHUN QIYMAT (LEAD MAGNET):', 20, 48);
-
-        // Bonus Content Card
-        doc.setFillColor(cardBg[0], cardBg[1], cardBg[2]);
-        doc.roundedRect(20, 55, 170, 205, 3, 3, 'F');
-        
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(11);
-        doc.setFont('helvetica', 'normal');
-        const bonusLines = doc.splitTextToSize(bonus, 155);
-        doc.text(bonusLines, 28, 70, { lineHeightFactor: 1.6 });
-
-        // Call to action note
-        doc.setFillColor(gold[0], gold[1], gold[2]);
-        doc.rect(20, 270, 170, 8, 'F');
+      // Niche tag
+      if (niche) {
+        doc.setFillColor(...gold);
+        doc.rect(20, 65, niche.length * 2.5 + 10, 8, 'F');
         doc.setTextColor(0, 0, 0);
-        doc.setFontSize(9);
-        doc.text('Ushbu material obunachini mijozimizga aylantirish uchun mo\'ljallangan.', 25, 275);
-
-        drawFooter(3);
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'bold');
+        doc.text(niche.toUpperCase(), 25, 70.5);
       }
 
-      doc.save(`Verba_${activeTab}_Strategiya_${state.niche}.pdf`);
+      // Main title
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(32);
+      doc.setFont('helvetica', 'bold');
+      const titleLines = doc.splitTextToSize(title, 115);
+      doc.text(titleLines, 20, 88);
+
+      // Subtitle divider
+      const titleEndY = 88 + titleLines.length * 11;
+      doc.setDrawColor(...gold);
+      doc.setLineWidth(0.6);
+      doc.line(20, titleEndY + 4, 60, titleEndY + 4);
+
+      // Platform badge
+      const platText = state.platforms.join(' · ') || activeTab;
+      doc.setTextColor(...gray);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text(platText, 20, titleEndY + 14);
+
+      // Author block at bottom
+      if (author) {
+        doc.setFillColor(28, 28, 28);
+        doc.rect(20, 240, 120, 22, 'F');
+        doc.setDrawColor(...gold);
+        doc.setLineWidth(0.3);
+        doc.rect(20, 240, 120, 22, 'S');
+
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'bold');
+        doc.text(author, 27, 250);
+
+        if (aTitle) {
+          doc.setTextColor(...gray);
+          doc.setFontSize(8.5);
+          doc.setFont('helvetica', 'normal');
+          doc.text(aTitle, 27, 257);
+        }
+      }
+
+      // Date bottom right
+      doc.setTextColor(...gray);
+      doc.setFontSize(8);
+      doc.text(new Date().toLocaleDateString('uz-UZ'), 20, 282);
+
+      // ===== PAGE 2: SCRIPT =====
+      doc.addPage();
+      doc.setFillColor(...dark);
+      doc.rect(0, 0, 210, 297, 'F');
+
+      // Header
+      doc.setFillColor(...gold);
+      doc.rect(0, 0, 210, 12, 'F');
+      doc.setTextColor(0, 0, 0);
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'bold');
+      doc.text(activeTab.toUpperCase() + ' — SSENARIY', 20, 8);
+      if (author) doc.text(author, 150, 8);
+
+      // Section label
+      doc.setTextColor(...gold);
+      doc.setFontSize(18);
+      doc.setFont('helvetica', 'bold');
+      doc.text('VIRAL SSENARIY', CONTENT_X, 28);
+      doc.setDrawColor(...gold);
+      doc.setLineWidth(0.6);
+      doc.line(CONTENT_X, 31, 75, 31);
+
+      // Script text with smart pagination
+      doc.setTextColor(230, 230, 230);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'normal');
+      const scriptLines = doc.splitTextToSize(script, CONTENT_W);
+      let pageCount = 2;
+
+      let y = 42;
+      for (const line of scriptLines) {
+        if (y + LINE_H > PAGE_BOTTOM) {
+          // New page
+          doc.addPage();
+          pageCount++;
+          doc.setFillColor(...dark);
+          doc.rect(0, 0, 210, 297, 'F');
+          doc.setFillColor(...gold);
+          doc.rect(0, 0, 210, 12, 'F');
+          doc.setTextColor(0, 0, 0);
+          doc.setFontSize(8);
+          doc.setFont('helvetica', 'bold');
+          doc.text(activeTab.toUpperCase() + ' — SSENARIY (DAVOMI)', 20, 8);
+          if (author) doc.text(author, 150, 8);
+          doc.setTextColor(230, 230, 230);
+          doc.setFontSize(11);
+          doc.setFont('helvetica', 'normal');
+          y = 25;
+        }
+        doc.text(line, CONTENT_X, y);
+        y += LINE_H;
+      }
+
+      // ===== PAGE 3+: BONUS MATERIAL =====
+      if (bonus) {
+        doc.addPage();
+        pageCount++;
+        doc.setFillColor(...dark);
+        doc.rect(0, 0, 210, 297, 'F');
+
+        // Header
+        doc.setFillColor(...gold);
+        doc.rect(0, 0, 210, 12, 'F');
+        doc.setTextColor(0, 0, 0);
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'bold');
+        doc.text('BONUS MATERIAL — LEAD MAGNET', 20, 8);
+        if (author) doc.text(author, 150, 8);
+
+        // Section label
+        doc.setTextColor(...gold);
+        doc.setFontSize(18);
+        doc.setFont('helvetica', 'bold');
+        doc.text('BONUS MATERIAL', CONTENT_X, 28);
+        doc.setDrawColor(...gold);
+        doc.setLineWidth(0.6);
+        doc.line(CONTENT_X, 31, 80, 31);
+
+        doc.setTextColor(230, 230, 230);
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'normal');
+        const bonusLines = doc.splitTextToSize(bonus, CONTENT_W);
+
+        let by = 42;
+        for (const line of bonusLines) {
+          if (by + LINE_H > PAGE_BOTTOM) {
+            doc.addPage();
+            doc.setFillColor(...dark);
+            doc.rect(0, 0, 210, 297, 'F');
+            doc.setFillColor(...gold);
+            doc.rect(0, 0, 210, 12, 'F');
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'bold');
+            doc.text('BONUS MATERIAL (DAVOMI)', 20, 8);
+            if (author) doc.text(author, 150, 8);
+            doc.setTextColor(230, 230, 230);
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'normal');
+            by = 25;
+          }
+          doc.text(line, CONTENT_X, by);
+          by += LINE_H;
+        }
+      }
+
+      const safeName = author ? author.replace(/\s+/g, '_') : (niche || 'material');
+      doc.save(`${safeName}_${activeTab}_${title.substring(0, 20).replace(/\s+/g, '_')}.pdf`);
     } catch (e) {
       console.error('PDF Generation failed:', e);
     } finally {
@@ -271,6 +358,7 @@ export default function Step5Script({ state, onBack }: Step5Props) {
   const currentBonus = leadMagnets[activeTab] || '';
 
   return (
+    <>
     <div className="flex flex-col gap-6 animate-in slide-in-from-right-8 duration-500">
       
       {/* Header */}
@@ -405,14 +493,24 @@ export default function Step5Script({ state, onBack }: Step5Props) {
                         </div>
                         <div className="flex gap-2">
                           {state.leadMagnetType === 'pdf' ? (
-                            <button 
-                              onClick={generatePDF}
-                              disabled={isGeneratingPDF || !currentBonus}
-                              className="flex items-center gap-2 px-4 py-1.5 bg-[#C9A84C] hover:bg-[#E0C16C] text-black border border-[#C9A84C]/30 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all disabled:opacity-50"
-                            >
-                              <Download className="w-3 h-3" />
-                              {isGeneratingPDF ? 'Tayyorlanmoqda...' : 'PDFni Yuklab Olish'}
-                            </button>
+                            <div className="flex gap-2">
+                              <button 
+                                onClick={() => setShowAuthorModal(true)}
+                                disabled={isGeneratingPDF || !currentBonus}
+                                className="flex items-center gap-2 px-4 py-1.5 bg-[#C9A84C] hover:bg-[#E0C16C] text-black border border-[#C9A84C]/30 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all disabled:opacity-50"
+                              >
+                                <Download className="w-3 h-3" />
+                                {isGeneratingPDF ? 'Tayyorlanmoqda...' : 'PDF yuklab olish'}
+                              </button>
+                              <button 
+                                onClick={openWithGamma}
+                                disabled={!currentBonus}
+                                className="flex items-center gap-2 px-4 py-1.5 bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 border border-purple-500/30 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all disabled:opacity-30"
+                              >
+                                <ExternalLink className="w-3 h-3" />
+                                Gamma bilan ochish
+                              </button>
+                            </div>
                           ) : (
                             <button 
                               onClick={() => currentBonus && handleCopy(currentBonus)}
@@ -526,5 +624,75 @@ export default function Step5Script({ state, onBack }: Step5Props) {
         </div>
       </div>
     </div>
+
+    {/* Author Modal */}
+    <AnimatePresence>
+      {showAuthorModal && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[300] flex items-center justify-center p-4"
+          onClick={(e) => { if (e.target === e.currentTarget) setShowAuthorModal(false); }}
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            className="w-full max-w-md bg-[#0d0d0d] border border-[#C9A84C]/30 rounded-2xl p-8 shadow-2xl"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-xl bg-[#C9A84C]/20 flex items-center justify-center">
+                <User className="w-5 h-5 text-[#C9A84C]" />
+              </div>
+              <div>
+                <h3 className="text-lg font-black text-white">Muallif Ma&apos;lumoti</h3>
+                <p className="text-[11px] text-gray-500">PDF-da siz tomonidan tayyorlangan bo&apos;lsin</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <div>
+                <label className="text-[10px] font-black text-[#C9A84C] uppercase tracking-widest block mb-2">Ism va Familiya</label>
+                <input
+                  type="text"
+                  value={authorName}
+                  onChange={(e) => setAuthorName(e.target.value)}
+                  placeholder="Masalan: Abdullayev Jasur"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-gray-600 focus:outline-none focus:border-[#C9A84C]/50 transition-all text-sm"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Mutaxassislik yoki Lavozim <span className="text-gray-600">(ixtiyoriy)</span></label>
+                <input
+                  type="text"
+                  value={authorTitle}
+                  onChange={(e) => setAuthorTitle(e.target.value)}
+                  placeholder="Masalan: Marketing Strategist"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-gray-600 focus:outline-none focus:border-[#C9A84C]/50 transition-all text-sm"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => setShowAuthorModal(false)}
+                className="flex-1 py-3 rounded-xl border border-white/10 text-gray-400 text-sm font-bold hover:bg-white/5 transition-all"
+              >
+                Bekor qilish
+              </button>
+              <button
+                onClick={generatePDF}
+                className="flex-1 py-3 rounded-xl bg-[#C9A84C] text-black text-sm font-black hover:bg-[#E0C16C] transition-all flex items-center justify-center gap-2"
+              >
+                <Download className="w-4 h-4" />
+                PDFni Yaratish
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+    </>
   );
 }
