@@ -31,6 +31,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const mode = searchParams.get('mode') || 'all';
     const niche = searchParams.get('niche') || 'Marketing';
+    const refreshSeed = searchParams.get('refresh') || '';
  
     const geminiKey = process.env.GEMINI_API_KEY;
     const youtubeKey = process.env.YOUTUBE_API_KEY;
@@ -83,7 +84,12 @@ export async function GET(request: Request) {
         QUALITY FILTER — SIFAT MEZONI:
         - Faqat faolligi yuqori bo'lgan (ko'p javob yozilgan, ko'p ko'rilgan) tortishuvli, qiziqarli muammolar va trendlardan foydalan.
         
-        MODE: ${mode}
+        MODE VA MIQDOR: 
+        Agar MODE 'all' bo'lsa: ANIQ 10 TA MAVZU BER (5 ta Trending, 5 ta Evergreen).
+        Agar MODE 'trending' yoki 'evergreen' bo'lsa: SHU TURI BO'YICHA ANIQ 10 TA MAVZU BER.
+        Jami natijalar soni doimo 10 ta bo'lishi SHART. Hozirgi rejim: ${mode}
+        
+        ${refreshSeed ? `BUNGA E'TIBOR QILING: Bu yangilash so'rovi (Refresh UID: ${refreshSeed}). Oldingi standart g'oyalardan qoching va mutlaqo YANGI, KUTILMAGAN, NOODATIY viral g'oyalarni toping.` : ""}
         
         CRITICAL LANGUAGE RULE — SODDA O'ZBEK TILI (chiqish tili):
         Natijalar (title, description) SODDA O'ZBEK TILIDA yoziladi.
@@ -111,6 +117,7 @@ export async function GET(request: Request) {
           model: 'gemini-2.5-flash',
           contents: prompt,
           config: {
+              temperature: 0.9,
               tools: [{ googleSearch: {} }]
           }
       });
