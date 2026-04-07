@@ -93,6 +93,20 @@ export default function Step4Hooks({ state, onUpdate, onNext, onBack }: Step4Hoo
 
   return (
     <div className="flex flex-col gap-8">
+      {/* Standard Top Navigation */}
+      <div className="flex w-full justify-between items-center mb-2 pb-4 border-b border-white/5">
+        <button onClick={onBack} className="flex items-center gap-2 px-4 py-2.5 bg-white/5 hover:bg-white/10 rounded-xl transition-all text-white text-[11px] font-black uppercase tracking-widest border border-white/5">
+          <ArrowLeft className="w-4 h-4" /> Ortga qaytish
+        </button>
+        <button 
+          onClick={() => { if (selectedFormat) fetchHooks(selectedFormat); else onUpdate({ toneOfVoice: undefined }); }}
+          className="flex items-center gap-2 px-4 py-2.5 bg-[#111] hover:bg-[#222] border border-white/10 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all hover:border-[#C9A84C]/40 group text-white"
+        >
+          <RefreshCw className={`w-4 h-4 text-[#C9A84C] ${loading ? 'animate-spin' : ''} group-hover:rotate-180 transition-transform duration-500`} /> 
+          Yangilash
+        </button>
+      </div>
+
       <div className="flex flex-col gap-2">
         <h2 className="text-4xl font-black font-sans tracking-tight text-white uppercase tracking-tighter">
           4. Hook (Ilgak) tanlang

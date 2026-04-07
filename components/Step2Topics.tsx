@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { RefreshCw, Flame, CheckCircle2, Globe, Sparkles, Video, ExternalLink, Link2, Search, Zap, Award, List, X, ChevronRight } from 'lucide-react';
+import { RefreshCw, Flame, CheckCircle2, Globe, Sparkles, Video, ExternalLink, Link2, Search, Zap, Award, List, X, ChevronRight, ArrowLeft } from 'lucide-react';
 import { TopicMode } from '@/app/page';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -143,12 +143,23 @@ export default function Step2Topics({ niche, onNext, onBack }: Step2Props) {
 
   return (
     <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      {/* Standard Top Navigation Bar */}
+      <div className="flex w-full justify-between items-center mb-2 pb-4 border-b border-white/5">
+        <button onClick={onBack} className="flex items-center gap-2 px-4 py-2.5 bg-white/5 hover:bg-white/10 rounded-xl transition-all text-white text-[11px] font-black uppercase tracking-widest border border-white/5">
+          <ArrowLeft className="w-4 h-4" /> Ortga qaytish
+        </button>
+        <button 
+          onClick={() => fetchTopics(mode, true)}
+          disabled={loading}
+          className="flex items-center gap-2 px-4 py-2.5 bg-[#111] hover:bg-[#222] border border-white/10 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all disabled:opacity-50 hover:border-[#C9A84C]/40 group text-white"
+        >
+          <RefreshCw className={`w-4 h-4 text-[#C9A84C] ${loading ? 'animate-spin' : ''} group-hover:rotate-180 transition-transform duration-500`} /> 
+          Yangilash
+        </button>
+      </div>
+
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <button onClick={onBack} className="p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-colors text-white">
-            ←
-          </button>
-          <div>
+        <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2 mb-1">
               <h2 className="text-3xl font-black font-sans tracking-tight text-white uppercase tracking-tighter leading-none">2. {niche} trendlari</h2>
               <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-widest animate-pulse">
@@ -156,16 +167,7 @@ export default function Step2Topics({ niche, onNext, onBack }: Step2Props) {
               </div>
             </div>
             <p className="text-gray-400 text-lg font-medium italic">Gemini 2.0 orqali real-vaqtdagi tahlil</p>
-          </div>
         </div>
-        <button 
-          onClick={() => fetchTopics(mode, true)}
-          disabled={loading}
-          className="flex items-center gap-3 px-6 py-3 rounded-xl bg-[#111] hover:bg-[#222] border border-white/10 transition-all disabled:opacity-50 hover:border-[#C9A84C]/40 group"
-        >
-          <RefreshCw className={`w-4 h-4 text-[#C9A84C] ${loading ? 'animate-spin' : ''} group-hover:rotate-180 transition-transform duration-500`} />
-          <span className="font-bold uppercase tracking-widest text-xs">Yangilash</span>
-        </button>
       </div>
 
       <div className="flex p-1 bg-[#111] rounded-xl border border-white/5 w-fit">

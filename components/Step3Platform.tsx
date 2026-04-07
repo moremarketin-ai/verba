@@ -13,7 +13,9 @@ import {
   Target,
   BookOpen,
   Sword,
-  CheckCircle2
+  CheckCircle2,
+  ArrowLeft,
+  RefreshCw
 } from 'lucide-react';
 import { AppState, Platform, ContentType, Skill } from '@/app/page';
 
@@ -62,11 +64,22 @@ export default function Step3Platform({ state, onUpdate, onNext, onBack }: Step3
   return (
     <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       
+      {/* Standard Top Navigation */}
+      <div className="flex w-full justify-between items-center mb-2 pb-4 border-b border-white/5">
+        <button onClick={onBack} className="flex items-center gap-2 px-4 py-2.5 bg-white/5 hover:bg-white/10 rounded-xl transition-all text-white text-[11px] font-black uppercase tracking-widest border border-white/5">
+          <ArrowLeft className="w-4 h-4" /> Ortga qaytish
+        </button>
+        <button 
+          onClick={() => onUpdate({ platforms: ['Instagram'], platformSettings: {}, selectedSkill: 'PAS' })}
+          className="flex items-center gap-2 px-4 py-2.5 bg-[#111] hover:bg-[#222] border border-white/10 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all hover:border-[#C9A84C]/40 group text-white"
+        >
+          <RefreshCw className="w-4 h-4 text-[#C9A84C] group-hover:rotate-180 transition-transform duration-500" /> 
+          Yangilash
+        </button>
+      </div>
+
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4 text-left">
-          <button onClick={onBack} className="p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-colors text-white">
-            ←
-          </button>
           <div className="flex flex-col gap-2">
               <h2 className="text-3xl font-black font-sans tracking-tight text-white uppercase tracking-tighter leading-none">3. Platformalar va strategiya</h2>
               <p className="text-gray-400 text-lg font-medium italic">Bir nechta platformani tanlang — har biri uchun alohida ssenariy yoziladi</p>
