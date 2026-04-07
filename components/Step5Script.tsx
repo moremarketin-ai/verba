@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { AppState } from '@/app/page';
-import { Copy, Download, RefreshCcw, Edit3, Check, Sparkles, Target, ExternalLink, User, ArrowLeft, RefreshCw } from 'lucide-react';
+import { Copy, Download, RefreshCcw, Edit3, Check, Sparkles, Target, ExternalLink, User, ArrowLeft, RefreshCw, Plus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Step5Props {
@@ -24,6 +24,7 @@ export default function Step5Script({ state, onBack }: Step5Props) {
   const [showAuthorModal, setShowAuthorModal] = useState(false);
   const [authorName, setAuthorName] = useState('');
   const [authorTitle, setAuthorTitle] = useState('');
+  const [loadingPlatform, setLoadingPlatform] = useState<string | null>(null);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -94,6 +95,29 @@ export default function Step5Script({ state, onBack }: Step5Props) {
       console.error(err);
     }
     setLoading(false);
+  };
+
+  const generateForPlatform = async (platform: string) => {
+    setLoadingPlatform(platform);
+    try {
+      const res = await fetch('/api/script', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...state, platforms: [platform] })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setScripts(prev => ({ ...prev, ...(data.scripts || {}) }));
+        setLeadMagnets(prev => ({ ...prev, ...(data.leadMagnets || {}) }));
+        // Using existing visual prompts is usually fine, or we can append
+        
+        setActiveTab(platform);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+    setLoadingPlatform(null);
   };
 
   useEffect(() => {
@@ -357,6 +381,10 @@ export default function Step5Script({ state, onBack }: Step5Props) {
   const currentScript = scripts[activeTab] || '';
   const currentBonus = leadMagnets[activeTab] || '';
 
+  const ALL_PLATFORMS = ['Instagram', 'YouTube', 'LinkedIn', 'Telegram', 'Twitter', 'Facebook'];
+  const currentPlatforms = Object.keys(scripts);
+  const availablePlatforms = ALL_PLATFORMS.filter(p => !currentPlatforms.includes(p));
+
   return (
     <>
     <div className="flex flex-col gap-6 animate-in slide-in-from-right-8 duration-500">
@@ -576,6 +604,34 @@ export default function Step5Script({ state, onBack }: Step5Props) {
               </motion.div>
             )}
           </div>
+
+          {/* Boshqa platformalarni taklif qilish (Yangi funksional) */}
+          {!loading && availablePlatforms.length > 0 && (
+            <div className="glass rounded-xl p-6 border border-white/5 flex flex-col gap-4 relative overflow-hidden mt-2">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[#C9A84C]/5 rounded-bl-[100px] blur-2xl pointer-events-none"></div>
+              <div className="relative z-10">
+                <h4 className="text-[12px] font-black text-white uppercase tracking-widest mb-1 flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-[#C9A84C]" />
+                  Boshqa tarmoqqa ham joylaymizmi?
+                </h4>
+                <p className="text-[11px] text-gray-500 font-medium">Bitta bosish orqali shu g‘oyani boshqa platformalarga ham moslashtirib oling.</p>
+              </div>
+              <div className="flex gap-2 flex-wrap relative z-10 mt-2">
+                {availablePlatforms.map(p => (
+                  <button
+                    key={p}
+                    onClick={() => generateForPlatform(p)}
+                    disabled={loadingPlatform !== null}
+                    className="flex items-center gap-1.5 px-4 py-2 bg-[#111] hover:bg-[#222] border border-white/10 hover:border-[#C9A84C]/30 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all disabled:opacity-50 text-gray-300"
+                  >
+                    {loadingPlatform === p ? <RefreshCcw className="w-3 h-3 animate-spin text-[#C9A84C]" /> : <Plus className="w-3 h-3" />}
+                    {p}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
         </div>
 
         {/* Sidebar Area */}
