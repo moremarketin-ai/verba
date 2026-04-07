@@ -59,8 +59,8 @@ export async function GET(request: Request) {
       }
 
       const prompt = `
-        ROLE: You are the world's most elite Strategic Marketing Researcher and Trend Analyst. 
-        Your mission is to perform a REAL-TIME search on the internet for the "${niche}" niche.
+        ROLE: Sen dunyoning eng yaxshi viral kontent tadqiqotchisi va trend analistisan.
+        Asosiy maqsad: Butun internet orqali (Instagram, YouTube, Reddit, Quora va barcha tarmoqlardan) "${niche}" sohasi bo'yicha HAQIQATDA odamlarni qiziqtirgan (viral) muammolar va savollarni topib, ularni kontent g'oyasiga aylantirish.
         
         ${ytContext ? `
         HERE IS DATA FROM YOUTUBE (VERIFIED 50K+ VIEWS):
@@ -74,15 +74,14 @@ export async function GET(request: Request) {
         3. NEVER search in Uzbek, Turkish, or other languages.
         
         PLATFORM MIX (ARALASH PLATFORMALAR) — JUDA MUHIM:
-        Natijalar bir xil platformadan bo'lmasin! ARALASH bo'lishi SHART:
-        - 3-4 ta INSTAGRAM (Reels, Posts) dan
-        - 3-4 ta YOUTUBE (Videos, Shorts) dan
-        - 1-2 ta REDDIT dan
-        - 1-2 ta TWITTER yoki QUORA dan
+        Istalgan sifatli platformadan (Instagram, YouTube, Reddit, Quora, Twitter, TikTok) ma'lumot izlashga ruxsat etiladi. Asosiysi — g'oya kuchli va viral bo'lsin.
         
+        JUDA QAT'IY QOIDA — MANBANI TILLGA OLMA:
+        Natija (title va description) yozayotganda HECH QACHON "Redditda aytishlaricha", "Quorada ko'p so'rashadi", "Instagramda mashhur" kabi iboralarni ishlatma!
+        Faqat va faqat asosiy MA'NO va G'OYANING o'zini taqdim et. Tomoshabin uchun bu shunchaki kuchli g'oya sifatida ko'rinishi kerak, qayerdan olingani matnda yozilmasligi shart.
+
         QUALITY FILTER — SIFAT MEZONI:
-        - MINIMUM 50,000 ko'rilish (views/reach). 50K dan kam bo'lgan kontent — TAQIQLANADI.
-        - Faqat faolligi yuqori kontentlardan g'oya ol.
+        - Faqat faolligi yuqori bo'lgan (ko'p javob yozilgan, ko'p ko'rilgan) tortishuvli, qiziqarli muammolar va trendlardan foydalan.
         
         MODE: ${mode}
         

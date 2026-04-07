@@ -38,11 +38,12 @@ export async function POST(request: Request) {
       Matn shunday yozilsinki, oddiy O'zbek tadbirkor ham tushunsin. Hech qanday inglizcha so'z bo'lmasin.
 
       RULES:
-      1. THE FIRST 3 WORDS are patterns-interrupts (kutilmagan so'zlar bilan boshlash).
-      2. No Conversational Filler.
+      1. THE FIRST 3 WORDS are patterns-interrupts (kutilmagan so'zlar bilan boshlang).
+      2. Hech qachon manbani aytmang (Masalan: "Redditda o'qidim", "Quorada yozishibdi", "Tarmoqlarda mashhur" kabi so'zlarni UMUMAN ISHLATMANG). G'oyani to'g'ridan-to'g'ri, go'yo o'zingizning insaytingizdek ayting.
       3. Language: "text", "triggerLabel", and "explanation" MUST be in SIMPLE UZBEK — no English words.
-      4. DO NOT mention TikTok.
+      4. DO NOT mention TikTok, Reddit, Quora, or Instagram in the text.
       5. "triggerLabel" ham o'zbekcha bo'lsin: "Qo'rquv", "Xato", "Qiziqish", "Sirlilik", "Shoshilinchlik" kabi.
+      6. Tomoshabinning o'ziga qaratilgan "Siz" yoki "Sen" olmoshlaridan faol foydalaning.
       
       OUTPUT FORMAT (JSON ARRAY of 3 items):
       [{ 
