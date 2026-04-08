@@ -118,7 +118,8 @@ export async function GET(request: Request) {
           contents: prompt,
           config: {
               temperature: 0.9,
-              tools: [{ googleSearch: {} }]
+              tools: [{ googleSearch: {} }],
+              responseMimeType: 'application/json',
           }
       });
 
