@@ -41,7 +41,7 @@ export async function GET(request: Request) {
     }
  
     try {
-      const ai = new GoogleGenAI({ apiKey: geminiKey, apiVersion: 'v1' });
+      const ai = new GoogleGenAI({ apiKey: geminiKey, apiVersion: 'v1beta' });
       
       // 1. Fetch real YouTube data as context
       let ytContext = "";
@@ -114,7 +114,7 @@ export async function GET(request: Request) {
       `;
 
       const response = await ai.models.generateContent({
-          model: 'gemini-1.5-flash',
+          model: 'gemini-1.5-flash-latest',
           contents: prompt,
           config: {
               temperature: 0.9,

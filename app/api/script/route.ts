@@ -11,7 +11,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const ai = new GoogleGenAI({ apiKey: geminiKey, apiVersion: 'v1' });
+    const ai = new GoogleGenAI({ apiKey: geminiKey, apiVersion: 'v1beta' });
     
     const targetPlatforms: string[] = platforms && platforms.length > 0 ? platforms : ['Instagram'];
     const platformList = targetPlatforms.join(', ');
@@ -133,7 +133,7 @@ OUTPUT FORMAT (FAQAT JSON, boshqa hech narsa yo'q):
 `;
 
     const response = await ai.models.generateContent({
-      model: 'gemini-1.5-pro',
+      model: 'gemini-1.5-pro-latest',
       contents: prompt,
       config: {
         responseMimeType: 'application/json',

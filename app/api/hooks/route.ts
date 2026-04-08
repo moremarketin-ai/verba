@@ -13,7 +13,7 @@ export async function POST(request: Request) {
   }
  
   try {
-    const ai = new GoogleGenAI({ apiKey: geminiKey, apiVersion: 'v1' });
+    const ai = new GoogleGenAI({ apiKey: geminiKey, apiVersion: 'v1beta' });
     
     const prompt = `
       Your task is to generate 3 powerful opening lines for ${platformList} ${contentType} about "${topicTitle}" (${topicDesc}) in the "${niche}" niche.
@@ -56,7 +56,7 @@ export async function POST(request: Request) {
     `;
 
     const response = await ai.models.generateContent({
-        model: 'gemini-1.5-flash',
+        model: 'gemini-1.5-flash-latest',
         contents: prompt,
         config: {
             responseMimeType: 'application/json',
