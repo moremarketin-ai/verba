@@ -133,7 +133,7 @@ OUTPUT FORMAT (FAQAT JSON, boshqa hech narsa yo'q):
 `;
 
     const response = await ai.models.generateContent({
-      model: 'gemini-1.5-pro',
+      model: 'gemini-2.0-flash-exp',
       contents: prompt,
       config: {
         responseMimeType: 'application/json',
