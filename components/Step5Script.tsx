@@ -221,7 +221,7 @@ export default function Step5Script({ state, onBack }: Step5Props) {
       doc.line(20, titleEndY + 4, 60, titleEndY + 4);
 
       // Platform badge
-      const platText = state.platforms.join(' · ') || activeTab;
+      const platText = (state.platforms || []).join(' · ') || activeTab;
       doc.setTextColor(...gray);
       doc.setFontSize(10);
       doc.setFont('helvetica', 'normal');
