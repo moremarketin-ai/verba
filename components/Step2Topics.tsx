@@ -430,12 +430,12 @@ export default function Step2Topics({ niche, onNext, onBack }: Step2Props) {
               className="flex-1 bg-[#141414] border border-white/10 rounded-2xl px-5 py-4 focus:border-[#C9A84C] outline-none transition-colors text-white/90 placeholder:text-gray-700 font-medium"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && customTopic.trim()) {
-                  onNext(customTopic, `Custom ${niche} maqsadi`);
+                  onNext(customTopic, `Mijoz o'zi kiritgan shaxsiy qat'iy mavzu.`);
                 }
               }}
             />
             <button 
-              onClick={() => customTopic.trim() && onNext(customTopic, `Custom ${niche} maqsadi`)}
+              onClick={() => customTopic.trim() && onNext(customTopic, `Mijoz o'zi kiritgan shaxsiy qat'iy mavzu.`)}
               disabled={!customTopic.trim()}
               className="px-10 py-5 bg-[#C9A84C] text-black font-black rounded-2xl hover:bg-[#E0C16C] transition-all uppercase tracking-widest text-[10px]"
             >

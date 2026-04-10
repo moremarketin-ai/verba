@@ -84,9 +84,10 @@ ${leadMagnetType === 'pdf' ? '5-7 ta aniq, amaliy maslahat yoki checklist. Sarla
     const prompt = `
 ROL: Sen O'zbekiston bozorining viral kontent strategiyasini mukammal tushunadigan, top copywriter va script yozuvchisan. Gemini eng kuchli versiyasin — sening har bir gaping tomoshabinni harakatga keltirishi kerak.
 
-TOPSHIRIQ:
-- Soha: "${niche}"
-- Mavzu: "${topicTitle}" (${topicDesc})
+TOPSHIRIQ VA MAQSAD:
+- Mavzu: "${topicTitle}" (DIQQAT: AYNAN MANA SHU G'OYA MAVZUNING YAGONA O'QI BO'LISHI SHART! Kiritilgan so'zlardan chetlashmang orqaga qarab umumiy narsalarni gapirmang!)
+- Mavzu detali: ${topicDesc}
+- Soha: "${niche}" (Faqat umumiy yo'nalish, asosiy mavzudan muhim emas)
 - Platformalar: ${platformList}
 - Ilgak: "${hookText}"
 

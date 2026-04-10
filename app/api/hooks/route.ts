@@ -18,6 +18,9 @@ export async function POST(request: Request) {
     const prompt = `
       Your task is to generate 3 powerful opening lines for ${platformList} ${contentType} about "${topicTitle}" (${topicDesc}) in the "${niche}" niche.
       
+      CRITICAL FOCUS RULE: The ABSOLUTE CORE of this content is exactly: "${topicTitle}". 
+      You MUST NOT drift away into generic "${niche}" advice. EVERYTHING must be built exactly around the specific idea the user wrote.
+      
       STRICT RULE: DO NOT use TikTok-specific slang or references. Focus on: ${platformList}.
       
       TONE: ${toneOfVoice}
