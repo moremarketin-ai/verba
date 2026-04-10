@@ -425,17 +425,25 @@ export default function Step4Hooks({ state, onUpdate, onNext, onBack }: Step4Hoo
             )}
           </AnimatePresence>
 
-          <div className="flex justify-between mt-8">
-            <button onClick={onBack} className="px-8 py-4 bg-white/5 rounded-2xl text-white font-bold hover:bg-white/10 transition-all uppercase tracking-widest text-xs">
-              ← Orqaga
-            </button>
-            <button 
-              onClick={onNext}
-              disabled={!state.hookText || (state.leadMagnetUsage === 'with' && (!state.selectedCTA || !state.leadMagnetType))}
-              className="px-12 py-4 bg-[#C9A84C] text-black rounded-2xl font-black hover:bg-[#E0C16C] transition-all disabled:opacity-30 uppercase tracking-widest text-xs"
-            >
-              Keyingi Bosqich →
-            </button>
+          <div className="flex flex-col gap-4 mt-8">
+            <div className="flex justify-between">
+              <button onClick={onBack} className="px-8 py-4 bg-white/5 rounded-2xl text-white font-bold hover:bg-white/10 transition-all uppercase tracking-widest text-xs">
+                ← Orqaga
+              </button>
+              <button 
+                onClick={onNext}
+                disabled={!state.hookText || (state.leadMagnetUsage === 'with' && (!state.selectedCTA || !state.leadMagnetType))}
+                className="px-12 py-4 bg-[#C9A84C] text-black rounded-2xl font-black hover:bg-[#E0C16C] transition-all disabled:opacity-30 uppercase tracking-widest text-xs shadow-[0_4px_20px_rgba(201,168,76,0.3)] disabled:shadow-none"
+              >
+                Keyingi Bosqich (Ssenariy) →
+              </button>
+            </div>
+            
+            {state.leadMagnetUsage === 'with' && (!state.selectedCTA || !state.leadMagnetType) && (
+              <p className="text-center text-[10px] text-amber-500/60 font-black uppercase tracking-widest mt-2">
+                Davom etish uchun avval sovg'a turi va murojaat usulini (CTA) tanlang!
+              </p>
+            )}
           </div>
         </div>
       )}

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { AppState } from '@/app/page';
-import { Copy, Download, RefreshCcw, Edit3, Check, Sparkles, Target, ExternalLink, User, ArrowLeft, RefreshCw, Plus } from 'lucide-react';
+import { Copy, Download, RefreshCcw, Edit3, Check, Sparkles, Target, ExternalLink, User, ArrowLeft, RefreshCw, Plus, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Step5Props {
@@ -591,10 +591,18 @@ export default function Step5Script({ state, onBack }: Step5Props) {
                           <p className="text-sm text-gray-300 leading-relaxed italic whitespace-pre-wrap w-full">
                             {currentBonus}
                           </p>
-                        ) : (
+                        ) : loading ? (
                           <div className="flex flex-col items-center gap-2 text-gray-500">
                             <RefreshCcw className="w-5 h-5 animate-spin" />
                             <p className="text-[10px] font-bold uppercase tracking-widest">Bonus material tayyorlanmoqda...</p>
+                          </div>
+                        ) : (
+                          <div className="flex flex-col items-center gap-2 text-rose-500/50">
+                            <AlertCircle className="w-5 h-5" />
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-center">
+                              AI bu platforma uchun bonus yaratishda xatolikka yo'l qo'ydi.<br/>
+                              Ssenariy matnini o'zidan foydalanishingiz mumkin.
+                            </p>
                           </div>
                         )}
                       </div>

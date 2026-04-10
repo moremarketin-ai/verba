@@ -119,16 +119,19 @@ VIRAL YOZISH QOIDALARI (BULAR SHART):
 
 =====================================
 OUTPUT FORMAT (FAQAT JSON, boshqa hech narsa yo'q):
+STRICT RULE: Siz quyidagi platformalar uchun ALOHIDA ssenariy va lead magnet yozishingiz SHART: ${platformList}.
+JSON kalitlari (keys) FAQAT mana shu nomlar bilan bo'lishi kerak.
+
 {
   "scripts": {
-     "PlatformName": "Tayyor ssenariy matni..."
+     ${targetPlatforms.map(p => `"${p}": "..."`).join(',\n     ')}
   },
   "leadMagnets": {
-     "PlatformName": "Lead magnet matni (checklist/post/ma'lumot)..."
+     ${targetPlatforms.map(p => `"${p}": "..."`).join(',\n     ')}
   },
   "visualPrompts": [
-    "Kadr 1: [Aniq sahna tavsifi — fon, harakat, ob'ektlar]",
-    "Kadr 2: [Aniq sahna tavsifi]"
+    "Kadr 1: ...",
+    "Kadr 2: ..."
   ]
 }
 `;
