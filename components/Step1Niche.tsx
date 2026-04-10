@@ -64,6 +64,7 @@ const CATEGORIES: Category[] = [
     icon: Zap, 
     color: 'text-amber-400',
     subNiches: [
+      { id: 'strategic_marketing', name: 'Strategik Marketing & Boshqaruv', icon: Briefcase },
       { id: 'smm', name: 'SMM va Ijtimoiy Tarmoqlar', icon: Camera },
       { id: 'target', name: 'Targeted Advertising', icon: Layout },
       { id: 'seo', name: 'SEO & Google Ads', icon: Compass },

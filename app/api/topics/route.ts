@@ -81,8 +81,10 @@ export async function GET(request: Request) {
         Natija (title va description) yozayotganda HECH QACHON "Redditda aytishlaricha", "Quorada ko'p so'rashadi", "Instagramda mashhur" kabi iboralarni ishlatma!
         Faqat va faqat asosiy MA'NO va G'OYANING o'zini taqdim et. Tomoshabin uchun bu shunchaki kuchli g'oya sifatida ko'rinishi kerak, qayerdan olingani matnda yozilmasligi shart.
 
-        QUALITY FILTER — SIFAT MEZONI:
-        - Faqat faolligi yuqori bo'lgan (ko'p javob yozilgan, ko'p ko'rilgan) tortishuvli, qiziqarli muammolar va trendlardan foydalan.
+        QUALITY FILTER — SIFAT VA DARAJA MEZONI (JUDA MUHIM):
+        - 101-darajadagi sayoz, hammaga ma'lum narsalardan mutlaqo qoching (masalan, "Qanday qilib rasm joylash kerak", "SMM nima" degan mavzularni BERMANG).
+        - O'rniga biznesga TA'SIR qiladigan chuqur strategik, yuqori darajadagi (C-level & Advanced) haqiqiy muammolar (LTV, unit-ekonomika, xarid psixologiyasi) haqida yozing.
+        - Faqat faolligi yuqori bo'lgan tortishuvli, qiziqarli va kuchli trendlardan foydalan.
         
         MODE VA MIQDOR: 
         Agar MODE 'all' bo'lsa: ANIQ 10 TA MAVZU BER (5 ta Trending, 5 ta Evergreen).
