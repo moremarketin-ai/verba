@@ -43,12 +43,14 @@ export async function POST(request: Request) {
         model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
-            tools: [{ googleSearch: {} }],
-            responseMimeType: 'application/json',
+            tools: [{ googleSearch: {} }]
         }
     });
 
-    const result = JSON.parse(response.text || '{}');
+    let rawText = response.text || '';
+    const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+    if (jsonMatch) rawText = jsonMatch[0];
+    const result = JSON.parse(rawText || '{}');
     return NextResponse.json(result);
 
   } catch (error: any) {
